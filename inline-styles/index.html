@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Inline Styles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/theme/black.min.css" id="theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/css/zenburn.min.css">
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h1>Inline Styles</h1>
+          <h2>Solving some CSS problems with Javascript</h2>
+          <ul>
+            <li>Some background on the approach</li>
+            <li>How we are using it</li>
+            <li>Why we started using it for Bambu</li>
+          </ul>
+          <p>⚡</p>
+          <a href="http://mattborn.com/talks/inline-styles">mattborn.com/talks/inline-styles</a>
+        </section>
+        <section>
+          <h2>What is an inline style?</h2>
+          <pre><code contenteditable>
+  <h1 style="font-size:22px">Hello world!</h1>
+          </code></pre>
+        </section>
+        <section id="fragments">
+          <h2>A brief history</h2>
+          <ul>
+            <li class="fragment">JSS proposed by Netscape in 1996</li>
+            <li class="fragment">CSS was a rival standard</li>
+            <li class="fragment">Who ultimately decided the fate of JSS by not implementing it? <span class="fragment">Internet Explorer.</span></li>
+            <li class="fragment">Why did CSS win? <span class="fragment">Because the internet was and still is mostly documents.</span></li>
+            <li class="fragment">In May 2003, [CSS Zen Garden](http://csszengarden.com) convinced us this was the correct path. (but these were very basic formatted documents)</li>
+          </ul>
+        </section>
+        <section data-markdown>
+## Why Now?
+
+- [Web Components](http://webcomponents.org)
+- Facebook Evangelism
+- In Javascript We Trust
+        </section>
+        <section data-markdown>
+## Web Components
+
+- Good encapsulation = components only know about themselves
+- Community consensus = ES6 modules (next version of JS), [Polymer](https://www.polymer-project.org), AMD, CommonJS, Require, Webpack, Browserify, React …
+- Not a library, but an architectural design pattern
+        </section>
+        <section data-markdown>
+## Facebook Evangelism
+
+- We haven’t actually separated concerns, we separated technologies.
+- If the markup changes, we still have to change the styles.
+- “We believe colocating style with your JS is a good idea.”
+- “It turns out that if you write your styles in JS, a large class of really hard problems with CSS just disappear instantly.”
+- Instead of focusing on what has changed, let’s focus on what is different.
+        </section>
+        <section data-markdown>
+## In Javascript We Trust
+
+- We already use Javascript for events + DOM manipulation.
+- Javascript can create elements.
+- Javascript can style elements.
+- Javascript is an expressive language that already has everything LESS + SASS are trying to account for.
+        </section>
+        <section data-markdown>
+## 7 problems with CSS at scale not addressed by LESS + SASS
+
+1. Global Namespace
+2. Dependencies
+3. Dead Code Elimination
+4. Minification
+5. Sharing Constants
+6. Non-deterministic Resolution
+7. Isolation
+
+[Christopher Chedeau, @Vjeux](https://speakerdeck.com/vjeux/react-css-in-js)
+
+[Style &amp; Layout with React Native](https://www.youtube.com/watch?v=7rDsRXj9-cU&t=540)
+        </section>
+        <section data-markdown>
+## The React Way
+
+- Why not do everything like we did in the 90s?
+- React says just re-render everything every time something changes, but only update what’s different.
+- Let’s make expressing markup native without templates + bind our events directly as well.
+- Hell, why not bring inline styles back like it’s 1999?
+        </section>
+        <section data-markdown>
+## Cascading Style Shits
+
+Could be unnecessarily abrasive.
+
+## What it is not.
+
+Inline styles do not represent an alternative for the systematic design, implementation and governance of consistent coding standards, tooling, or processes.
+
+We may have reached a metaphorical crossroads, but it is less of a everything-we-think-we-know-is-wrong and more of a make-sure-we-understand-decisions-that-were-made-for-us.
+
+Also not talking about number of HTTP requests, payload sizes, rule and selector limits.
+
+## Concerns
+
+- Document vs. application
+- Straight-forward vs. nuanced
+
+- Less magic + fewer concerns
+- Explicit vs. implicit (designers tend misinterpret Good design is obvious, great design is transparent)
+- Vanilla CSS vs. LESS vs. Sass vs. ?
+- Naming conventions for selectors: OOCSS, ACSS, BEM, SMACSS, etc.
+- Naming will always be hard, but do we really need to involve ourselves with the adoption, education + maintenance of all these competing approaches?
+- Dead code removal
+
+- Who spends the most time maintaining?
+- Influence vs. execution
+- Telephone game: Backlog → UX → UI → Prototype → Engineering + QA → Production → Support
+- Which party has the greatest influence on what actually makes it to production and how
+- What could be → what is + what will be → what should be
+
+> There are only two hard things in Computer Science: cache invalidation and naming things. —Phil Karlton
+
+## Big takeaways
+
+- Better encapsulation
+- [This might be wrong](http://codahale.com)
+        </section>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/head.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/js/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'slide',
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/markdown/marked.min.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/markdown/markdown.min.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/highlight/highlight.min.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/zoom-js/zoom.min.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/notes/notes.min.js', async: true }
+        ]
+      });
+    </script>
+  </body>
+</html>

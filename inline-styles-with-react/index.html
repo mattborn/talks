@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Inline Styles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/theme/black.min.css" id="theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/css/zenburn.min.css">
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h1>Inline Styles</h1>
+          <h2>(with React)</h2>
+          <p>⚡</p>
+          <a href="http://mattborn.com/talks/inline-styles-with-react">mattborn.com/talks/inline-styles-with-react</a>
+        </section>
+        <section>
+          <section>
+            <h2>What is an inline style?</h2>
+            <pre><code contenteditable>
+    &lt;h1 style="font-size:22px"&gt;Hello world!&lt;/h1&gt;
+            </code></pre>
+          </section>
+          <section data-background="https://dl.dropboxusercontent.com/s/5t7smeinrgssszf/2015-04-29%20at%201.12%20PM.png">
+          </section>
+          <section data-background="http://standardissuemagazine.com/application/uploads/2015/04/promo-angry-mob.jpg">
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Facebook Evangelism</h2>
+            <ul>
+                <li>We haven’t actually separated concerns, we separated technologies.</li>
+                <li>If the markup changes, we still have to change the styles.</li>
+                <li>“We believe colocating style with your JS is a good idea.”</li>
+                <li>“It turns out that if you write your styles in JS, a large class of really hard problems with CSS just disappear instantly.”</li>
+                <li>Instead of focusing on what has changed, let’s focus on what is different.</li>
+            </ul>
+          </section>
+          <section data-background="http://clubmate.fi/content/uploads/fry-CSS.jpg">
+          </section>
+        </section>
+        <section>
+          <h2>Javascript syntax</h2>
+          <pre><code contenteditable>
+  var styles = {
+    fontSize: 16, // camelCase, integers + commas
+    WebkitFontSmoothing: 'antialiased' // PascalCase + quoted values
+  };
+          </code></pre>
+          <p>Command-line conversion tool: <a href="https://github.com/FormidableLabs/css-to-radium">css-to-radium</a></p>
+        </section>
+        <section>
+          <section>
+            <h2>Usage in React</h2>
+            <pre><code contenteditable>
+  var Component = React.createClass({
+    render () {
+      var styles = {
+        fontSize: 16,
+        fontWeight: 'bold'
+      };
+      return <h1 style={styles}>{this.props.someTextProp}</h1>;
+    } // ignore quotes ^
+  });
+            </code></pre>
+          </section>
+          <section>
+            <h2>We already have variables, mixins + expressive logic!</h2>
+            <pre><code contenteditable>
+  var Component = React.createClass({
+    render () {
+      var size = this.props.size;
+      var styles = {
+        button: {
+          background: WHITE // some constant we defined earlier
+        },
+        text: {
+          fontSize: size === 'large' ? 22 : 16 // JS expressions?!
+        }
+      };
+      _.extend(styles.button, sharedDependency); // @extend anyone?
+      return (
+        <button
+          style={_.extend(styles, this.props.styles)}
+        >
+          <span className="button-text">{this.props.someTextProp}</span>
+        </button>
+      );
+    } // ignore quotes ^
+  });
+            </code></pre>
+            <p>* we are separating local presentation from layout</p>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>What about reusability?</h2>
+            <p>If you are using components properly, a button is a button is still a button only now the styles are also encapsulated.</p>
+            <p>But if we want to re-use anything across components…</p>
+          </section>
+          <section>
+            <p>… modular Javascript is good at that:</p>
+              <pre><code contenteditable>
+  module.exports = {
+    BAMBU: '#11a7aa',
+  };
+              </code></pre>
+              <pre><code contenteditable>
+  var Colors = require('Colors'); // or require('McDonalds') THEMES!
+
+  var style = {
+    background: Colors.BAMBU
+  };
+              </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>What about :focus, :hover, etc.</h2>
+              <p>A real example from Bambu</p>
+              <pre><code contenteditable>
+    var EditTagButton = React.createClass({
+      propTypes: {
+        text: React.PropTypes.string.isRequired
+      },
+      _focusStyle: function (e) {
+        e.currentTarget.style.background = Colors.text;
+        e.currentTarget.style.color = Colors.white;
+      },
+      _defaultStyle: function (e) {
+        e.currentTarget.style.background = Colors.gray4;
+        e.currentTarget.style.color = Colors.text;
+      },
+      render: function () {
+        var style = {
+            background: Colors.gray4,
+            borderRadius: 15,
+            fontWeight: 600,
+            lineHeight: '20px',
+            margin: '0 10px 10px 0',
+            padding: '5px 15px',
+        };
+        return (
+            <button
+                onFocus={this._focusStyle}
+                onBlur={this._defaultStyle}
+                onMouseEnter={this._focusStyle}
+                onMouseLeave={this._defaultStyle}
+                style={_.extend(style, this.props.style)}
+                type="button"
+            >
+                <span className="button-text">{this.props.text}</span>
+            </button>
+        );
+      }
+    });
+              </code></pre>
+              <p>This works + is explicit, but it could be more familiar …</p>
+            </section>
+            <section data-background="https://dl.dropboxusercontent.com/s/e0fjtavepwv76og/2015-04-29%20at%201.37%20PM.png">
+              <h2>Enter Radium</h2>
+              <a href="http://projects.formidablelabs.com/radium">projects.formidablelabs.com/radium</a>
+            </section>
+        </section>
+        <section>
+          <h2>What about media queries?</h2>
+            <pre><code contenteditable>
+  if (matchMedia('(max-width: 480px)').matches) {
+    _.extend(styles, {width: '100%'});
+  }
+            </code></pre>
+            <a href="https://github.com/paulirish/matchMedia.js">Paul Irish made a polyfill for this</a>
+        </section>
+        <section>
+          <section>
+            <h2>What about pseudo elements?</h2>
+            <p>It is possible to access their styles with JS …</p>
+            <pre><code contenteditable>
+  window.getComputedStyle(
+    document.querySelector('.element'), ':before'
+  ).getPropertyValue('color');
+            </code></pre>
+          </section>
+          <section>
+            <p>… but we stopped using them. Being more explict helps engineers better understand what is happening.</p>
+            <pre><code contenteditable>
+  &lt;div style={{clear:both}} /&gt;
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <h2>What about classNames?</h2>
+          <p>Well… we don’t really need them.</p>
+          <p>Maybe for QA?</p>
+        </section>
+        <section>
+          <section>
+            <h2>What about performance?</h2>
+            <a href="https://twitter.com/paul_irish/status/583754139571593216">2 Apr 2015</a>
+            <blockquote>@paul_irish know of any good data on CSS perf of inline style vs selectors?</blockquote>
+            <blockquote>@trek assuming a big DOM and large DOM changes, selector resolution can be 10-60% of style recalculation. So inline has that sort of benefit</blockquote>
+            <p>Selector resolution = the browser taking the information from the stylesheet and applying it to the HTML elements.</p>
+          </section>
+          <section>
+            <a href="https://twitter.com/paul_irish/status/583764280375320577">2 Apr 2015</a>
+            <blockquote>@paul_irish @trek have you seen Radium yet? http://projects.formidablelabs.com/radium  cc @alexlande</blockquote>
+            <blockquote>@colinmegill yup. Been an open tab for the past two weeks. Pretty intriguing</blockquote>
+          </section>
+        </section>
+        <section>
+          <h2>Big wins for Bambu</h2>
+          <ul>
+            <li>Better Encapsulation (junk drawer effect)</li>
+            <li>Fewer Concerns (JSX, sourcemaps, uglify)</li>
+            <li>More Explicit for Engineers (Corey’s comment)</li>
+          </ul>
+        </section>
+        <section>
+          <h2>A case for cascading</h2>
+          <p>We still embrace the C in CSS where it makes sense</p>
+          <p>e.g. Root level tag selector resets</p>
+        </section>
+        <section>
+          <h2>A case for classes</h2>
+          <p>All of our buttons contain <pre><code>&lt;span class="button-text"&gt;</code></pre> so we can <pre><code>.wf-loading .button-text { visibility: hidden; }</code></pre> to avoid FOUT while preserving layout.</p>
+        </section>
+        <section>
+          <h2>Resources</h2>
+          <ul>
+            <li><a href="https://speakerdeck.com/vjeux/react-css-in-js">CSS in JS</a></li>
+            <li><a href="https://www.youtube.com/watch?v=7rDsRXj9-cU&t=540">React Native Keynote</a></li>
+            <li><a href="http://projects.formidablelabs.com/radium">Radium</a></li>
+            <li>More to come…</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Final thought</h2>
+          <p>We may have reached a crossroads, but it is less of a <em>everything-we-think-we-know-is-wrong</em> and more of a <em>make-sure-we-understand-decisions-that-were-made-for-us</em>.</p>
+        </section>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/head.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/js/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'slide',
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/markdown/marked.min.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/markdown/markdown.min.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/highlight/highlight.min.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/zoom-js/zoom.min.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/notes/notes.min.js', async: true }
+        ]
+      });
+    </script>
+  </body>
+</html>
